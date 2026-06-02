@@ -1,4 +1,40 @@
 import type { Portfolio } from "@/components/PortfolioCard";
+import portfolios from "@/data/portfolios.json";
+
+function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 60);
+}
+
+function shortHash(s: string) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h.toString(36).slice(0, 6);
+}
+
+export function slugFor(p: Portfolio) {
+  const base = slugify(p.name) || "portfolio";
+  return `${base}-${shortHash(p.url)}`;
+}
+
+// Build a stable slug index once
+const all = portfolios as Portfolio[];
+export const SLUG_INDEX: Map<string, Portfolio> = new Map(
+  all.map((p) => [slugFor(p), p]),
+);
+
+export function findBySlug(slug: string): Portfolio | undefined {
+  return SLUG_INDEX.get(slug);
+}
+
 
 export const CATEGORIES = [
   "Frontend",
