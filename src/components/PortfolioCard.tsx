@@ -43,10 +43,9 @@ export function PortfolioCard({ p }: { p: Portfolio }) {
   const screenshot = `https://image.thum.io/get/width/640/crop/420/noanimate/${p.url}`;
 
   return (
-    <a
-      href={p.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to="/portfolio/$slug"
+      params={{ slug: slugFor(p) }}
       className="group relative flex flex-col overflow-hidden rounded-2xl bg-card border border-border transition-all duration-300 hover:-translate-y-1"
       style={{ boxShadow: "var(--shadow-card)" }}
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "var(--shadow-card-hover)")}
