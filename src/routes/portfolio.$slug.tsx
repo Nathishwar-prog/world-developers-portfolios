@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, ArrowUpRight, Copy, Globe, Share2, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ArrowUpRight, Copy, Globe, Share2, Sparkles, Trophy, Gauge } from "lucide-react";
+import { useState, useEffect } from "react";
 import {
   findBySlug,
   slugFor,
@@ -9,6 +9,7 @@ import {
 } from "@/lib/portfolio-taxonomy";
 import portfolios from "@/data/portfolios.json";
 import { PortfolioCard, type Portfolio } from "@/components/PortfolioCard";
+import { getScreenshotUrl } from "@/lib/screenshot";
 
 function hostname(url: string) {
   try {
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
         ? `Portfolio of ${p.name} — ${hostname(p.url)}.`
         : "Portfolio details.";
     const img = p
-      ? `https://image.thum.io/get/width/1200/crop/630/noanimate/${p.url}`
+      ? getScreenshotUrl(p.url, { width: 1200, height: 630 })
       : undefined;
     return {
       meta: [
@@ -87,12 +88,18 @@ function NotFoundPortfolio() {
 const all = portfolios as Portfolio[];
 
 function PortfolioDetail() {
-  const { portfolio: p } = Route.useLoaderData() as { portfolio: Portfolio };
+  const { portfolio: initialPortfolio } = Route.useLoaderData() as { portfolio: Portfolio };
+  const [p, setP] = useState<Portfolio>(initialPortfolio);
+
+  useEffect(() => {
+    setP(initialPortfolio);
+  }, [initialPortfolio]);
+
   const host = hostname(p.url);
   const category = categoryFor(p);
   const techs = technologiesFor(p);
-  const big = `https://image.thum.io/get/width/1280/crop/800/noanimate/${p.url}`;
-  const mobile = `https://image.thum.io/get/width/420/viewportWidth/420/crop/720/noanimate/${p.url}`;
+  const big = getScreenshotUrl(p.url, { width: 1280, height: 800 });
+  const mobile = getScreenshotUrl(p.url, { width: 420, height: 720, isMobile: true });
   const [copied, setCopied] = useState(false);
 
   const initials = p.name
@@ -141,12 +148,21 @@ function PortfolioDetail() {
           >
             <ArrowLeft className="h-4 w-4" /> Back to gallery
           </Link>
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-blue text-white shadow">
-              <Sparkles className="h-4 w-4" />
-            </div>
-            <span className="font-display text-sm font-bold tracking-tight">Folio</span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/leaderboard"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Trophy className="h-4 w-4 text-amber-500" />
+              Leaderboard
+            </Link>
+            <Link to="/" className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-blue text-white shadow">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <span className="font-display text-sm font-bold tracking-tight">Folio</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -171,25 +187,91 @@ function PortfolioDetail() {
                 href={p.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block aspect-[16/10] overflow-hidden"
+                className="relative block aspect-[16/10] overflow-hidden bg-brand-ink"
               >
+                {/* Desktop Mock Web Page Fallback */}
+                <div className="absolute inset-0 flex flex-col justify-between p-8 text-white bg-gradient-to-br from-brand-ink via-slate-900 to-brand-green/20 select-none">
+                  {/* Nav */}
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span className="font-display font-bold text-lg text-primary tracking-wider">{initials}</span>
+                    <div className="flex items-center gap-4 text-xs text-white/60">
+                      <span>About</span>
+                      <span>Projects</span>
+                      <span>Contact</span>
+                    </div>
+                  </div>
+                  
+                  {/* Hero */}
+                  <div className="my-auto max-w-lg text-left">
+                    <span className="inline-block rounded-full bg-primary/20 px-2.5 py-1 text-[10px] font-semibold text-primary uppercase tracking-wider">
+                      Portfolio Showcase
+                    </span>
+                    <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
+                      Hi, I'm <span className="bg-gradient-to-r from-brand-green to-brand-blue bg-clip-text text-transparent">{p.name}</span>
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-300">
+                      {p.tagline ?? "Software engineer and creator pushing the boundaries of web development."}
+                    </p>
+                    <div className="mt-6 flex items-center gap-3">
+                      <span className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-white shadow-md">
+                        Hire Me
+                      </span>
+                      <span className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-slate-300">
+                        View Work
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between border-t border-white/10 pt-4 text-xs text-white/40">
+                    <span>Designed by {p.name}</span>
+                    <span>Powered by Folio</span>
+                  </div>
+                </div>
+
                 <img
                   src={big}
                   alt={`${p.name} portfolio screenshot`}
                   loading="eager"
-                  className="h-full w-full object-cover object-top"
+                  className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-500"
+                  onLoad={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "1")}
+                  onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
                 />
               </a>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1 overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="aspect-[9/16] overflow-hidden">
+                <div className="aspect-[9/16] overflow-hidden relative bg-brand-ink flex flex-col justify-between p-4">
+                  {/* Mobile Mock Web Page Fallback */}
+                  <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-75 text-white select-none">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                      <span className="text-[10px] font-bold text-primary">{initials}</span>
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    </div>
+                    {/* Hero */}
+                    <div className="my-auto flex flex-col items-center gap-2 text-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm shadow">
+                        {initials}
+                      </div>
+                      <h4 className="font-display text-xs font-bold leading-tight">{p.name}</h4>
+                      <p className="text-[9px] text-slate-300 line-clamp-3 px-1">{p.tagline ?? "Software Developer"}</p>
+                      <span className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1 text-[8px] font-bold text-white shadow mt-1">
+                        Connect
+                      </span>
+                    </div>
+                    {/* Footer bar */}
+                    <div className="h-1 w-12 bg-white/20 mx-auto rounded-full" />
+                  </div>
+                  
                   <img
                     src={mobile}
                     alt={`${p.name} mobile preview`}
                     loading="lazy"
-                    className="h-full w-full object-cover object-top"
+                    className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-500"
+                    onLoad={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "1")}
+                    onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
                   />
                 </div>
                 <p className="px-3 py-2 text-center text-[11px] text-muted-foreground">
@@ -265,6 +347,14 @@ function PortfolioDetail() {
                 Details
               </p>
               <dl className="mt-3 space-y-2.5 text-sm">
+                {p.rank && (
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="text-muted-foreground">Rank</dt>
+                    <dd className="text-right font-bold text-primary">
+                      {p.rank === 1 ? "🥇 #1" : p.rank === 2 ? "🥈 #2" : p.rank === 3 ? "🥉 #3" : `#${p.rank}`}
+                    </dd>
+                  </div>
+                )}
                 <div className="flex items-start justify-between gap-3">
                   <dt className="text-muted-foreground">Domain</dt>
                   <dd className="text-right font-medium">{host}</dd>
@@ -280,6 +370,129 @@ function PortfolioDetail() {
                   </dd>
                 </div>
               </dl>
+            </div>
+
+            {/* Lighthouse Performance Audit Dashboard */}
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <div className="flex items-center justify-between border-b border-border/40 pb-2.5">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Performance Audit
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {p.lighthouse?.updatedAt 
+                      ? `Last audited: ${new Date(p.lighthouse.updatedAt).toLocaleDateString()}` 
+                      : "Not audited yet"}
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-semibold text-emerald-600">
+                  Auto-updated weekly
+                </span>
+              </div>
+
+              {p.lighthouse ? (
+                <div className="mt-4 space-y-4">
+                  {/* Overall score gauge */}
+                  <div className="flex items-center justify-between bg-muted/40 rounded-xl p-3 border border-border/40">
+                    <div className="flex items-center gap-2">
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display font-extrabold text-sm border-2 ${
+                        p.lighthouse.score >= 90
+                          ? "bg-emerald-500/10 border-emerald-500 text-emerald-500 shadow shadow-emerald-500/15"
+                          : p.lighthouse.score >= 50
+                            ? "bg-amber-500/10 border-amber-500 text-amber-500"
+                            : "bg-destructive/10 border-destructive text-destructive"
+                      }`}>
+                        {p.lighthouse.score}
+                      </div>
+                      <div>
+                        <p className="font-display font-bold text-xs">Performance Index</p>
+                        <p className="text-[10px] text-muted-foreground text-left">Weighted score of all audits</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-primary">#{p.rank} Ranked</span>
+                  </div>
+
+                  {/* Category bars */}
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    {/* Performance */}
+                    <div className="border border-border/60 bg-muted/20 rounded-xl p-2.5 text-left">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-muted-foreground text-[10px] font-medium">Performance</span>
+                        <span className={`font-extrabold ${
+                          p.lighthouse.performance >= 90 ? "text-emerald-500" : p.lighthouse.performance >= 50 ? "text-amber-500" : "text-destructive"
+                        }`}>{p.lighthouse.performance}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            p.lighthouse.performance >= 90 ? "bg-emerald-500" : p.lighthouse.performance >= 50 ? "bg-amber-500" : "bg-destructive"
+                          }`}
+                          style={{ width: `${p.lighthouse.performance}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Accessibility */}
+                    <div className="border border-border/60 bg-muted/20 rounded-xl p-2.5 text-left">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-muted-foreground text-[10px] font-medium">Accessibility</span>
+                        <span className={`font-extrabold ${
+                          p.lighthouse.accessibility >= 90 ? "text-emerald-500" : p.lighthouse.accessibility >= 50 ? "text-amber-500" : "text-destructive"
+                        }`}>{p.lighthouse.accessibility}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            p.lighthouse.accessibility >= 90 ? "bg-emerald-500" : p.lighthouse.accessibility >= 50 ? "bg-amber-500" : "bg-destructive"
+                          }`}
+                          style={{ width: `${p.lighthouse.accessibility}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Best Practices */}
+                    <div className="border border-border/60 bg-muted/20 rounded-xl p-2.5 text-left">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-muted-foreground text-[10px] font-medium">Best Practices</span>
+                        <span className={`font-extrabold ${
+                          p.lighthouse.bestPractices >= 90 ? "text-emerald-500" : p.lighthouse.bestPractices >= 50 ? "text-amber-500" : "text-destructive"
+                        }`}>{p.lighthouse.bestPractices}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            p.lighthouse.bestPractices >= 90 ? "bg-emerald-500" : p.lighthouse.bestPractices >= 50 ? "bg-amber-500" : "bg-destructive"
+                          }`}
+                          style={{ width: `${p.lighthouse.bestPractices}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* SEO */}
+                    <div className="border border-border/60 bg-muted/20 rounded-xl p-2.5 text-left">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-muted-foreground text-[10px] font-medium">SEO</span>
+                        <span className={`font-extrabold ${
+                          p.lighthouse.seo >= 90 ? "text-emerald-500" : p.lighthouse.seo >= 50 ? "text-amber-500" : "text-destructive"
+                        }`}>{p.lighthouse.seo}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            p.lighthouse.seo >= 90 ? "bg-emerald-500" : p.lighthouse.seo >= 50 ? "bg-amber-500" : "bg-destructive"
+                          }`}
+                          style={{ width: `${p.lighthouse.seo}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 py-6 border border-dashed border-border rounded-xl text-center bg-muted/10">
+                  <p className="text-xs font-medium">No performance data available</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Click Run Audit to query Google PageSpeed Insights.</p>
+                </div>
+              )}
             </div>
 
             {techs.length > 0 && (

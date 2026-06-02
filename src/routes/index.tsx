@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, Sparkles, Github, X, SlidersHorizontal } from "lucide-react";
+import { Search, Sparkles, Github, X, SlidersHorizontal, Trophy } from "lucide-react";
 import portfolios from "@/data/portfolios.json";
 import { PortfolioCard, type Portfolio } from "@/components/PortfolioCard";
 import {
@@ -125,24 +125,42 @@ function Index() {
               <p className="text-[11px] text-muted-foreground">Portfolio Showcase</p>
             </div>
           </div>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noreferrer"
-            className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-accent sm:flex"
-          >
-            <Github className="h-4 w-4" />
-            Submit yours
-          </a>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/leaderboard"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-accent"
+            >
+              <Trophy className="h-4 w-4 text-amber-500" />
+              <span className="hidden sm:inline">Leaderboard</span>
+            </Link>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-accent sm:flex"
+            >
+              <Github className="h-4 w-4" />
+              Submit yours
+            </a>
+          </div>
         </div>
       </header>
 
       <section className="relative mx-auto max-w-7xl px-4 pb-10 pt-16 sm:px-6 sm:pt-24 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            {data.length.toLocaleString()} portfolios indexed
-          </span>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              {data.length.toLocaleString()} portfolios indexed
+            </span>
+            <Link
+              to="/leaderboard"
+              className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-600 transition-all hover:bg-amber-500/20"
+            >
+              <Trophy className="h-3.5 w-3.5 text-amber-500" />
+              View Leaderboard & Rankings
+            </Link>
+          </div>
           <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-6xl">
             Discover portfolios from{" "}
             <span className="bg-gradient-to-r from-brand-green via-brand-blue to-brand-ink bg-clip-text text-transparent">
@@ -329,7 +347,7 @@ function Index() {
 
       <footer className="border-t border-border/60 bg-background/60 py-8">
         <div className="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6 lg:px-8">
-          Built with care. Previews via thum.io · {data.length.toLocaleString()} curated entries.
+          Built with care. Previews via Microlink · {data.length.toLocaleString()} curated entries.
         </div>
       </footer>
     </div>

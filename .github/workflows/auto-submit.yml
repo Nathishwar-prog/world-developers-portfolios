@@ -1,0 +1,82 @@
+name: Auto Submit Portfolio
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  auto-submit:
+    if: contains(github.event.issue.labels.*.name, 'portfolio-submission')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci || npm install --no-audit --no-fund
+
+      - name: Run parser & validation script
+        id: parser
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: node .github/scripts/auto-submit-parser.js
+
+      - name: Commit and push changes
+        if: steps.parser.outputs.status == 'success'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/portfolios.json
+          git commit -m "chore: auto-add portfolio from submission #${{ github.event.issue.number }}"
+          git push
+
+      - name: Comment on issue (Success)
+        if: steps.parser.outputs.status == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const rank = '${{ steps.parser.outputs.rank }}';
+            const name = '${{ steps.parser.outputs.name }}';
+            const url = '${{ steps.parser.outputs.url }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🎉 **Success!** Your portfolio (**${name}** - ${url}) has been automatically verified and added to the showcase.\n\n📊 **Initial Rank Assigned:** #${rank}\n\n⚡ A background Lighthouse audit will run shortly to update your rank with live performance metrics.\n\nThank you for contributing! This issue is now closed.`
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+
+      - name: Comment on issue (Failure)
+        if: failure() || steps.parser.outputs.status == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const errorMsg = '${{ steps.parser.outputs.error_message }}' || 'The submission is invalid. Please make sure the URL is accessible and all form fields are filled out correctly.';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `❌ **Submission Verification Failed**\n\n${errorMsg}\n\nWe have closed this issue. Please check the validation details, update your template, and open a new submission issue when ready.`
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });

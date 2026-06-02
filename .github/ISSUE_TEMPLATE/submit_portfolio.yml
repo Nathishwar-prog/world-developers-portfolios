@@ -1,0 +1,37 @@
+name: "🚀 Submit Portfolio"
+description: "Submit your developer/designer portfolio to the showcase leaderboard."
+title: "[Submission]: "
+labels: ["portfolio-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting your portfolio! Please fill out the form below. Ranks are determined by performance, SEO, accessibility, and design metrics.
+  - type: input
+    id: name
+    attributes:
+      label: "Full Name"
+      placeholder: "Jane Doe"
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: "Portfolio URL"
+      placeholder: "https://janedoe.dev"
+    validations:
+      required: true
+  - type: textarea
+    id: tagline
+    attributes:
+      label: "Tagline"
+      placeholder: "Full Stack Engineer specializing in React & TypeScript."
+    validations:
+      required: true
+  - type: input
+    id: technologies
+    attributes:
+      label: "Technologies"
+      placeholder: "React, Next.js, Tailwind CSS, TypeScript"
+    validations:
+      required: true

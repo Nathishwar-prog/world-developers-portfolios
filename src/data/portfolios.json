@@ -2,36 +2,92 @@
   {
     "name": "Aaaabad Ahmed",
     "url": "https://sawad.framer.website",
-    "tagline": "Software Engineer"
+    "tagline": "Software Engineer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:29:54.302Z"
+    }
   },
   {
     "name": "Aaabaad Al Aziz",
     "url": "https://red1-for-hek.vercel.app",
-    "tagline": "Full Stack Engineer"
+    "tagline": "Full Stack Engineer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:30:54.638Z"
+    }
   },
   {
     "name": "Aaabad Touk",
     "url": "https://aaabadcode.com",
-    "tagline": "AI Engineer"
+    "tagline": "AI Engineer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:31:55.338Z"
+    }
   },
   {
     "name": "Aabraham James",
-    "url": "https://seera.framer.website"
+    "url": "https://seera.framer.website",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:32:55.920Z"
+    }
   },
   {
     "name": "Aabu Sayed",
     "url": "https://aabu-sayed-portfolio.vercel.app",
-    "tagline": "Software Engineer & Web Developer"
+    "tagline": "Software Engineer & Web Developer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:33:56.682Z"
+    }
   },
   {
     "name": "Aaditya Domle",
     "url": "https://aadi.is-a.dev",
-    "tagline": "Full Stack Developer"
+    "tagline": "Full Stack Developer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:34:57.416Z"
+    }
   },
   {
     "name": "Aahana Bobade",
     "url": "https://aahanabobade.com",
-    "tagline": "Software Developer"
+    "tagline": "Software Developer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-02T15:35:58.028Z"
+    }
   },
   {
     "name": "Aakash Rajbanshi",
