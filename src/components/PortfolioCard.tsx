@@ -1,4 +1,7 @@
 import { ArrowUpRight, Globe } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { slugFor } from "@/lib/portfolio-taxonomy";
+
 
 export interface Portfolio {
   name: string;
