@@ -87,7 +87,7 @@ function NotFoundPortfolio() {
 const all = portfolios as Portfolio[];
 
 function PortfolioDetail() {
-  const { portfolio: p } = Route.useLoaderData();
+  const { portfolio: p } = Route.useLoaderData() as { portfolio: Portfolio };
   const host = hostname(p.url);
   const category = categoryFor(p);
   const techs = technologiesFor(p);
