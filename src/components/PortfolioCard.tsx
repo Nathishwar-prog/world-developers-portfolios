@@ -83,6 +83,6 @@ export function PortfolioCard({ p }: { p: Portfolio }) {
           <p className="text-sm text-primary/80 truncate">{host}</p>
         )}
       </div>
-    </a>
+    </Link>
   );
 }
