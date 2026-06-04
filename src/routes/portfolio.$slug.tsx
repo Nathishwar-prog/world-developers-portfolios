@@ -567,6 +567,13 @@ function PortfolioDetail() {
           </section>
         )}
       </main>
+
+      <Lightbox
+        images={galleryImages}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onIndexChange={setLightboxIndex}
+      />
     </div>
   );
 }
