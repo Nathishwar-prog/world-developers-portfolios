@@ -10,6 +10,8 @@ import {
 import portfolios from "@/data/portfolios.json";
 import { PortfolioCard, type Portfolio } from "@/components/PortfolioCard";
 import { getScreenshotUrl } from "@/lib/screenshot";
+import { Lightbox, type LightboxImage } from "@/components/Lightbox";
+import { Maximize2 } from "lucide-react";
 
 function hostname(url: string) {
   try {
@@ -100,7 +102,13 @@ function PortfolioDetail() {
   const techs = technologiesFor(p);
   const big = getScreenshotUrl(p.url, { width: 1280, height: 800 });
   const mobile = getScreenshotUrl(p.url, { width: 420, height: 720, isMobile: true });
+  const hires = getScreenshotUrl(p.url, { width: 1920, height: 1200 });
   const [copied, setCopied] = useState(false);
+  const galleryImages: LightboxImage[] = [
+    { src: hires, alt: `${p.name} — desktop view`, label: `${p.name} · Desktop` },
+    { src: mobile, alt: `${p.name} — mobile view`, label: `${p.name} · Mobile` },
+  ];
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const initials = p.name
     .split(" ")
@@ -183,11 +191,11 @@ function PortfolioDetail() {
                   <span className="truncate">{p.url}</span>
                 </div>
               </div>
-              <a
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative block aspect-[16/10] overflow-hidden bg-brand-ink"
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(0)}
+                aria-label={`Open ${p.name} desktop preview in full screen`}
+                className="group/preview relative block aspect-[16/10] w-full overflow-hidden bg-brand-ink cursor-zoom-in"
               >
                 {/* Desktop Mock Web Page Fallback */}
                 <div className="absolute inset-0 flex flex-col justify-between p-8 text-white bg-gradient-to-br from-brand-ink via-slate-900 to-brand-green/20 select-none">
@@ -237,12 +245,24 @@ function PortfolioDetail() {
                   onLoad={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "1")}
                   onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
                 />
-              </a>
+
+                {/* Hover overlay hint */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/preview:bg-black/30 group-hover/preview:opacity-100">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-brand-ink shadow-lg">
+                    <Maximize2 className="h-3.5 w-3.5" /> View full screen
+                  </span>
+                </div>
+              </button>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1 overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="aspect-[9/16] overflow-hidden relative bg-brand-ink flex flex-col justify-between p-4">
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(1)}
+                  aria-label={`Open ${p.name} mobile preview in full screen`}
+                  className="group/mobile aspect-[9/16] overflow-hidden relative bg-brand-ink flex flex-col justify-between p-4 w-full cursor-zoom-in"
+                >
                   {/* Mobile Mock Web Page Fallback */}
                   <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-75 text-white select-none">
                     {/* Header */}
@@ -264,7 +284,7 @@ function PortfolioDetail() {
                     {/* Footer bar */}
                     <div className="h-1 w-12 bg-white/20 mx-auto rounded-full" />
                   </div>
-                  
+
                   <img
                     src={mobile}
                     alt={`${p.name} mobile preview`}
@@ -273,7 +293,13 @@ function PortfolioDetail() {
                     onLoad={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "1")}
                     onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
                   />
-                </div>
+
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/mobile:bg-black/30 group-hover/mobile:opacity-100">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-brand-ink shadow">
+                      <Maximize2 className="h-3 w-3" /> Expand
+                    </span>
+                  </div>
+                </button>
                 <p className="px-3 py-2 text-center text-[11px] text-muted-foreground">
                   Mobile view
                 </p>
@@ -541,6 +567,13 @@ function PortfolioDetail() {
           </section>
         )}
       </main>
+
+      <Lightbox
+        images={galleryImages}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onIndexChange={setLightboxIndex}
+      />
     </div>
   );
 }
