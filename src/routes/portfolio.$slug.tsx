@@ -10,6 +10,8 @@ import {
 import portfolios from "@/data/portfolios.json";
 import { PortfolioCard, type Portfolio } from "@/components/PortfolioCard";
 import { getScreenshotUrl } from "@/lib/screenshot";
+import { Lightbox, type LightboxImage } from "@/components/Lightbox";
+import { Maximize2 } from "lucide-react";
 
 function hostname(url: string) {
   try {
