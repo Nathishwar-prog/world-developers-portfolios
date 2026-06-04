@@ -104,7 +104,15 @@
   },
   {
     "name": "Aakash Sharma",
-    "url": "https://aakash-sharma.netlify.app"
+    "url": "https://aakash-sharma.netlify.app",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-04T06:28:39.762Z"
+    }
   },
   {
     "name": "Aakhand Tajmirul",
