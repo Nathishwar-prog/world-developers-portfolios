@@ -102,7 +102,13 @@ function PortfolioDetail() {
   const techs = technologiesFor(p);
   const big = getScreenshotUrl(p.url, { width: 1280, height: 800 });
   const mobile = getScreenshotUrl(p.url, { width: 420, height: 720, isMobile: true });
+  const hires = getScreenshotUrl(p.url, { width: 1920, height: 1200 });
   const [copied, setCopied] = useState(false);
+  const galleryImages: LightboxImage[] = [
+    { src: hires, alt: `${p.name} — desktop view`, label: `${p.name} · Desktop` },
+    { src: mobile, alt: `${p.name} — mobile view`, label: `${p.name} · Mobile` },
+  ];
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const initials = p.name
     .split(" ")
