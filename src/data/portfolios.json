@@ -92,7 +92,15 @@
   {
     "name": "Aakash Rajbanshi",
     "url": "https://aakashrajbanshi.com.np",
-    "tagline": "Flutter Developer"
+    "tagline": "Flutter Developer",
+    "lighthouse": {
+      "performance": 50,
+      "accessibility": 50,
+      "bestPractices": 50,
+      "seo": 50,
+      "score": 50,
+      "updatedAt": "2026-06-04T06:27:39.734Z"
+    }
   },
   {
     "name": "Aakash Sharma",
