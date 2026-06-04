@@ -257,7 +257,12 @@ function PortfolioDetail() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1 overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="aspect-[9/16] overflow-hidden relative bg-brand-ink flex flex-col justify-between p-4">
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(1)}
+                  aria-label={`Open ${p.name} mobile preview in full screen`}
+                  className="group/mobile aspect-[9/16] overflow-hidden relative bg-brand-ink flex flex-col justify-between p-4 w-full cursor-zoom-in"
+                >
                   {/* Mobile Mock Web Page Fallback */}
                   <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-75 text-white select-none">
                     {/* Header */}
@@ -279,7 +284,7 @@ function PortfolioDetail() {
                     {/* Footer bar */}
                     <div className="h-1 w-12 bg-white/20 mx-auto rounded-full" />
                   </div>
-                  
+
                   <img
                     src={mobile}
                     alt={`${p.name} mobile preview`}
@@ -288,7 +293,13 @@ function PortfolioDetail() {
                     onLoad={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "1")}
                     onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
                   />
-                </div>
+
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/mobile:bg-black/30 group-hover/mobile:opacity-100">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-brand-ink shadow">
+                      <Maximize2 className="h-3 w-3" /> Expand
+                    </span>
+                  </div>
+                </button>
                 <p className="px-3 py-2 text-center text-[11px] text-muted-foreground">
                   Mobile view
                 </p>
